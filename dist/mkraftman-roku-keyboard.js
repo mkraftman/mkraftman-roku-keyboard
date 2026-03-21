@@ -240,7 +240,7 @@ class MkraftmanRokuKeyboard extends HTMLElement {
     this._el.hiddenInput.style.pointerEvents = "auto";
     this._el.hiddenInput.focus();
     // Clear any existing text on the Roku to keep in sync
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 20; i++) {
       this._enqueueCommand("backspace");
     }
     // Scroll the card into view above the keyboard, then save that position
@@ -331,8 +331,9 @@ class MkraftmanRokuKeyboard extends HTMLElement {
     const command = this._commandQueue.shift();
     this._sendCommand(command);
 
-    // Small delay between commands to prevent Roku from dropping them
-    setTimeout(() => this._processQueue(), 80);
+    // Shorter delay for backspaces, longer for character input to avoid drops
+    const delay = command === "backspace" ? 30 : 80;
+    setTimeout(() => this._processQueue(), delay);
   }
 
   _sendCommand(command) {
