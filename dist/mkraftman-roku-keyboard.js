@@ -190,8 +190,15 @@ class MkraftmanRokuKeyboard extends HTMLElement {
     });
 
     // Input events → diff and send keystrokes
+    // Hidden input always keeps a zero-width space guard char so iOS
+    // backspace never hits an empty field (which triggers scroll drift).
     this._el.hiddenInput.addEventListener("input", () => {
-      const newText = this._el.hiddenInput.value;
+      const raw = this._el.hiddenInput.value;
+      const newText = raw.replace(/\u200B/g, "");
+      // Re-insert guard if the user deleted it (backspace on empty)
+      if (!raw.includes("\u200B")) {
+        this._el.hiddenInput.value = "\u200B" + newText;
+      }
       this._updateTextDisplay(newText);
       this._handleTextChange(newText);
       // Snap back to saved scroll position to prevent iOS drift
@@ -228,10 +235,14 @@ class MkraftmanRokuKeyboard extends HTMLElement {
     this._prevText = "";
     this._el.kbBtn.style.display = "none";
     this._el.activeRow.classList.add("visible");
-    this._el.hiddenInput.value = "";
+    this._el.hiddenInput.value = "\u200B";
     this._updateTextDisplay("");
     this._el.hiddenInput.style.pointerEvents = "auto";
     this._el.hiddenInput.focus();
+    // Clear any existing text on the Roku to keep in sync
+    for (let i = 0; i < 50; i++) {
+      this._enqueueCommand("backspace");
+    }
     // Scroll the card into view above the keyboard, then save that position
     setTimeout(() => {
       this.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -256,7 +267,7 @@ class MkraftmanRokuKeyboard extends HTMLElement {
     this._prevText = "";
 
     this._el.hiddenInput.blur();
-    this._el.hiddenInput.value = "";
+    this._el.hiddenInput.value = "\u200B";
     this._el.hiddenInput.style.pointerEvents = "none";
     this._el.activeRow.classList.remove("visible");
     this._el.kbBtn.style.display = "flex";
