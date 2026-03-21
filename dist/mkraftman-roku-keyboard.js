@@ -239,10 +239,12 @@ class MkraftmanRokuKeyboard extends HTMLElement {
     this._updateTextDisplay("");
     this._el.hiddenInput.style.pointerEvents = "auto";
     this._el.hiddenInput.focus();
-    // Clear any existing text on the Roku to keep in sync
-    for (let i = 0; i < 20; i++) {
-      this._enqueueCommand("backspace");
-    }
+    // Clear any existing text on the Roku — single batch call, much faster
+    this._hass.callService("remote", "send_command", {
+      entity_id: this._config.entity,
+      command: Array(20).fill("backspace"),
+      delay_secs: 0,
+    });
     // Scroll the card into view above the keyboard, then save that position
     setTimeout(() => {
       this.scrollIntoView({ behavior: "smooth", block: "end" });
