@@ -2,7 +2,7 @@
  * mkraftman-roku-keyboard
  * Custom HACS card for Roku text input.
  * Opens native soft keyboard and sends keystrokes via remote.send_command
- * using literal_X for characters and backspace for deletions.
+ * using Lit_X for characters and backspace for deletions.
  */
 
 class MkraftmanRokuKeyboard extends HTMLElement {
@@ -280,7 +280,7 @@ class MkraftmanRokuKeyboard extends HTMLElement {
     if (newText.startsWith(oldText)) {
       const added = newText.slice(oldText.length);
       for (const ch of added) {
-        this._enqueueCommand("literal_" + ch);
+        this._enqueueCommand("Lit_" + ch);
       }
     }
     // If oldText starts with newText, chars were deleted from end
@@ -296,7 +296,7 @@ class MkraftmanRokuKeyboard extends HTMLElement {
         this._enqueueCommand("backspace");
       }
       for (const ch of newText) {
-        this._enqueueCommand("literal_" + ch);
+        this._enqueueCommand("Lit_" + ch);
       }
     }
 
