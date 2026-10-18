@@ -16,3 +16,7 @@ entity: remote.roku_ultra_living_room
 | Option | Required | Description |
 |--------|----------|-------------|
 | entity | Yes | The `remote.*` entity for your Roku device |
+
+## Releasing
+
+Bump the version in `VERSION` (e.g. `1.0.1`) and push to `main`. The release workflow creates the matching `vX.Y.Z` tag and GitHub release with `dist/mkraftman-roku-keyboard.js` attached. Pushing a `vX.Y.Z` tag directly also still works.
